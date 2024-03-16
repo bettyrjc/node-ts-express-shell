@@ -4,7 +4,7 @@
 import { CustomError, LoginUserDto, RegisterUseDto } from "../../domain";
 import { userModel } from "../../data/mongo/models/user.model";
 import { UserEntity } from "../../domain/entities/user.entity";
-import { bcryptAdapter } from "../../config";
+import { JwtAdapter, bcryptAdapter } from "../../config";
 
 export class AuthService {
   constructor() {}
@@ -39,6 +39,10 @@ export class AuthService {
     );
     if (!isMatching) throw CustomError.badRequest("Password is invalid");
     const { password, ...userEntity } = UserEntity.fromObject(user);
-    return { user: userEntity, token: "abc" };
+
+    const token =await JwtAdapter.generateToken({ id: user.id });
+    if(!token) throw CustomError.internalServel("Error generating token");
+
+    return { user: userEntity, token: token };
   }
 }
