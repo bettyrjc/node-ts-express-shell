@@ -28,4 +28,12 @@ import mongoose from "mongoose";
   },
   
 });
+userSchema.set("toJSON", {
+  virtuals: true,
+  versionKey: false,
+  transform: function(doc, ret, options) {
+    delete ret._id;
+    delete ret.password;
+  },
+});
 export const userModel = mongoose.model("User", userSchema);
